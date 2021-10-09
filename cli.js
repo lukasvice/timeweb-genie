@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-const http = require("./libs/http");
-const parser = require("./libs/parser");
+const Http = require("./classes/Http");
+const Parser = require("./classes/Parser");
+const { formatDate, checkDateFormat, minutesToHours } = require("./utils/dateTime");
 
 const scriptArgs = process.argv.slice(2);
 
@@ -15,13 +16,16 @@ try {
   process.exit(1);
 }
 
-if (config.justificationTypes) {
-  parser.setJustificationTypes(config.justificationTypes.split(","));
-}
+const http = new Http({
+  timewebUrl: config.timewebUrl
+});
+
+const parser = new Parser(http, {
+  justificationTypes: config.justificationTypes?.split(",")
+});
 
 (async () => {
   try {
-    http.setTimewebUrl(config.timewebUrl);
     await http.authenticate(config.username, config.password);
   } catch (e) {
     console.error("Failed to sign in - please verify your credentials!");
@@ -41,26 +45,12 @@ if (config.justificationTypes) {
   }
 
   const timeCardHtml = await http.loadTimeCardHtml(fromDate, toDate);
-  const dateTimes = parser.parseDateTimes(timeCardHtml);
+  parser.parseTimeCard(timeCardHtml)
 
-  dateTimes.forEach((dateTime) => {
+  parser.getWorkingTimes().forEach((dateTime) => {
     console.log(
       dateTime.date,
-      Math.round((dateTime.workingMinutes / 60 + Number.EPSILON) * 100) / 100
+      minutesToHours(dateTime.workingMinutes)
     );
   });
 })();
-
-function formatDate(date) {
-  return (
-    ("0" + date.getDate()).slice(-2) +
-    "/" +
-    ("0" + (date.getMonth() + 1)).slice(-2) +
-    "/" +
-    date.getFullYear()
-  );
-}
-
-function checkDateFormat(dateStr) {
-  return /\d{2}\/\d{2}\/\d{4}/.test(dateStr);
-}
