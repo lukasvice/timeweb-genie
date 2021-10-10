@@ -8,13 +8,13 @@ module.exports = {
       date.getFullYear()
     );
   },
-  
+
   checkDateFormat(dateStr) {
     return /\d{2}\/\d{2}\/\d{4}/.test(dateStr);
   },
 
   minutesToHours(minutes) {
-    return Math.round((minutes / 60 + Number.EPSILON) * 100) / 100
+    return Math.round((minutes / 60 + Number.EPSILON) * 100) / 100;
   },
 
   durationText(minutes) {
@@ -23,4 +23,4 @@ module.exports = {
 
     return [`${hours}h`, `${minutes}m`].filter((n) => parseInt(n)).join(" ");
   },
-}
+};

@@ -3,12 +3,12 @@ const TIME_TYPE_END = "end";
 
 module.exports = class {
   constructor(config = null) {
-    this.justificationTypes = config.justificationTypes
-    this.dateTimes = []
+    this.justificationTypes = config.justificationTypes;
+    this.dateTimes = [];
   }
 
   parseTimeCard(timeCardHtml) {
-    this.dateTimes = this.#parseDateTimes(timeCardHtml)
+    this.dateTimes = this.#parseDateTimes(timeCardHtml);
   }
 
   getWorkingTimes() {
@@ -23,31 +23,31 @@ module.exports = class {
       return {
         date,
         workingMinutes,
-      }
-    })
+      };
+    });
   }
 
   #parseDateTimes(timeCardHtml) {
     let dateTimes = [];
-    
+
     const rowRegex =
       /<td[^>]+>(?:<font[^>]+>)?(\d{2}.\d{2}.\d{2})[^<]+(?:<\/font>)?<\/td>[\S\s]+?<\/tr><tr style="background-color:#EEEEEE"/gi;
     let rowMatches;
-  
-    while (rowMatches = rowRegex.exec(timeCardHtml)) {
+
+    while ((rowMatches = rowRegex.exec(timeCardHtml))) {
       const date = rowMatches[1];
       const row = rowMatches[0];
-  
+
       const times = this.#parseRow(row);
-  
+
       if (times.length) {
         dateTimes.push({
           date,
-          times
+          times,
         });
       }
     }
-  
+
     return dateTimes;
   }
 
@@ -60,48 +60,50 @@ module.exports = class {
 
   #parseClockedTimes(row) {
     let times = [];
-  
+
     const colRegex = /<td[^>]+>((?:[EU]\d{2}:\d{2}[\W<br>]+)+)<\/td>/i;
     let timesColMatches = colRegex.exec(row);
-  
+
     if (timesColMatches) {
       const timesCol = timesColMatches[1];
       const timesRegex = /([EU])(\d{2}:\d{2})/g;
-  
+
       let timesMatches;
-      while (timesMatches = timesRegex.exec(timesCol)) {
+      while ((timesMatches = timesRegex.exec(timesCol))) {
         times.push({
           type: timesMatches[1] === "E" ? TIME_TYPE_START : TIME_TYPE_END,
           time: timeHHMMToMinutes(timesMatches[2]),
         });
       }
     }
-  
+
     return times;
   }
 
   #parseJustificationTimes(row) {
     let times = [];
-  
+
     const htmlRegex = /onmouseover="return overlib\(event,(.*?),/i;
     const htmlMatches = htmlRegex.exec(row);
-  
+
     if (htmlMatches) {
       const popupHtml = htmlMatches[1];
       const rowRegex = /<TR(.*?)<\/TR>/gi;
-  
+
       let rowMatches;
-      while (rowMatches = rowRegex.exec(popupHtml)) {
+      while ((rowMatches = rowRegex.exec(popupHtml))) {
         const row = rowMatches[1];
-  
-        const foundType = this.justificationTypes.find((type) => row.includes(type));
-  
+
+        const foundType = this.justificationTypes.find((type) =>
+          row.includes(type)
+        );
+
         if (foundType) {
           const timesRegex = /<TD>(\d{2}:\d{2})<\/TD>/gi;
-  
+
           const timesMatchesStart = timesRegex.exec(row);
           const timesMatchesEnd = timesRegex.exec(row);
-  
+
           times.push({
             type: TIME_TYPE_START,
             time: timeHHMMToMinutes(timesMatchesStart[1]),
@@ -113,7 +115,7 @@ module.exports = class {
         }
       }
     }
-  
+
     return times;
   }
 };

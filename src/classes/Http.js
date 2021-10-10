@@ -3,13 +3,13 @@ const https = require("https");
 
 module.exports = class {
   constructor(config) {
-    this.timewebUrl = config.timewebUrl
-    
+    this.timewebUrl = config.timewebUrl;
+
     this.httpsAgent = new https.Agent({
       rejectUnauthorized: config.disableSSL === false,
     });
 
-    this.cookies = null
+    this.cookies = null;
   }
 
   async authenticate(username, password) {
@@ -28,7 +28,7 @@ module.exports = class {
     if (/name='USERNAME'/.test(response.data)) {
       throw new Error("Login failed");
     }
-    
+
     this.cookies = response.headers["set-cookie"];
   }
 
@@ -36,7 +36,7 @@ module.exports = class {
     if (!this.cookies) {
       throw new Error("Not authenticated!");
     }
-  
+
     const responseTimeCard = await axios({
       url: this.timewebUrl,
       method: "POST",
@@ -50,9 +50,9 @@ module.exports = class {
       }),
       httpsAgent: this.httpsAgent,
     });
-  
+
     const data = responseTimeCard.data;
-  
+
     return data;
   }
 };

@@ -31,7 +31,7 @@ try {
 }
 
 const http = new Http({
-  timewebUrl: config.timewebUrl
+  timewebUrl: config.timewebUrl,
 });
 
 const parser = new Parser({
