@@ -6,9 +6,9 @@ A CLI tool to calculate working hours logged in the Time@Web application.
 | ---------------------------------------------- |
 | This is an alpha release and errors may occur. |
 
-## Installation and Configuration
+## Installation/Update and Configuration
 
-1. Install
+1. Install (or update)
 
    ```sh
    npm install -g github:lukasvice/timeweb-genie
