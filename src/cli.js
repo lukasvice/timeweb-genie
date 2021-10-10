@@ -61,9 +61,17 @@ const parser = new Parser({
   const timeCardHtml = await http.loadTimeCardHtml(fromDate, toDate);
   parser.parseTimeCard(timeCardHtml);
 
+  const totals = {
+    workingMinutes: 0,
+    relativeMinutes: 0,
+  };
+
   const table = parser.getWorkingTimes().map((dateTime) => {
     const relativeMinutes =
       dateTime.workingMinutes - config.targetWorkingHours * 60;
+
+    totals.workingMinutes += dateTime.workingMinutes;
+    totals.relativeMinutes += relativeMinutes;
 
     return {
       Date: dateTime.date,
@@ -73,6 +81,17 @@ const parser = new Parser({
       Diff: durationText(relativeMinutes),
     };
   });
+
+  table.push(
+    {},
+    {
+      Date: "TOTAL",
+      Hours: minutesToHours(totals.workingMinutes),
+      Time: durationText(totals.workingMinutes),
+      "Diff Hours": minutesToHours(totals.relativeMinutes),
+      Diff: durationText(totals.relativeMinutes),
+    }
+  );
 
   console.table(table);
 })();
