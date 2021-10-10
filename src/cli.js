@@ -63,7 +63,7 @@ const parser = new Parser({
 
   const table = parser.getWorkingTimes().map((dateTime) => {
     const relativeMinutes =
-      config.targetWorkingHours * 60 - dateTime.workingMinutes;
+      dateTime.workingMinutes - config.targetWorkingHours * 60;
 
     return {
       Date: dateTime.date,
