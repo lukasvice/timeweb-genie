@@ -2,15 +2,29 @@
 
 const Http = require("./classes/Http");
 const Parser = require("./classes/Parser");
-const { formatDate, checkDateFormat, minutesToHours } = require("./utils/dateTime");
+const {
+  formatDate,
+  checkDateFormat,
+  minutesToHours,
+  durationText,
+} = require("./utils/dateTime");
 
 const scriptArgs = process.argv.slice(2);
 
-let config;
+let config = {
+  timewebUrl: null,
+  username: null,
+  password: null,
+  justificationTypes: ["SMART WORKING", "23TELE TELEARBEIT"],
+  targetWorkingHours: 7.5,
+};
 
 try {
   const homeDir = require("os").homedir();
-  config = require(`${homeDir}/.timeweb-genie.json`);
+  config = {
+    ...config,
+    ...require(`${homeDir}/.timeweb-genie.json`),
+  };
 } catch (e) {
   console.error("Could not open ~/.timeweb-genie.json - PLease see README.md!");
   process.exit(1);
@@ -20,8 +34,8 @@ const http = new Http({
   timewebUrl: config.timewebUrl
 });
 
-const parser = new Parser(http, {
-  justificationTypes: config.justificationTypes?.split(",")
+const parser = new Parser({
+  justificationTypes: config.justificationTypes,
 });
 
 (async () => {
@@ -45,12 +59,20 @@ const parser = new Parser(http, {
   }
 
   const timeCardHtml = await http.loadTimeCardHtml(fromDate, toDate);
-  parser.parseTimeCard(timeCardHtml)
+  parser.parseTimeCard(timeCardHtml);
 
-  parser.getWorkingTimes().forEach((dateTime) => {
-    console.log(
-      dateTime.date,
-      minutesToHours(dateTime.workingMinutes)
-    );
+  const table = parser.getWorkingTimes().map((dateTime) => {
+    const relativeMinutes =
+      config.targetWorkingHours * 60 - dateTime.workingMinutes;
+
+    return {
+      Date: dateTime.date,
+      Hours: minutesToHours(dateTime.workingMinutes),
+      Time: durationText(dateTime.workingMinutes),
+      "Diff Hours": minutesToHours(relativeMinutes),
+      Diff: durationText(relativeMinutes),
+    };
   });
+
+  console.table(table);
 })();

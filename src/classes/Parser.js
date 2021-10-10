@@ -3,7 +3,7 @@ const TIME_TYPE_END = "end";
 
 module.exports = class {
   constructor(config = null) {
-    this.justificationTypes = config?.justificationTypes ?? ["SMART WORKING", "23TELE TELEARBEIT"]
+    this.justificationTypes = config.justificationTypes
     this.dateTimes = []
   }
 

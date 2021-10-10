@@ -15,5 +15,12 @@ module.exports = {
 
   minutesToHours(minutes) {
     return Math.round((minutes / 60 + Number.EPSILON) * 100) / 100
-  }
+  },
+
+  durationText(minutes) {
+    const hours = Math.trunc(minutes / 60);
+    minutes = minutes - 60 * hours;
+
+    return [`${hours}h`, `${minutes}m`].filter((n) => parseInt(n)).join(" ");
+  },
 }
