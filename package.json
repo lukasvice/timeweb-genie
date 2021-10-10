@@ -9,7 +9,7 @@
   },
   "repository": "github:lukasvice/timeweb-genie",
   "bin": {
-    "timeweb-genie": "./cli.js"
+    "timeweb-genie": "./src/cli.js"
   },
   "dependencies": {
     "axios": "^0.22.0"
