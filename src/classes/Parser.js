@@ -31,7 +31,7 @@ module.exports = class {
     let dateTimes = [];
 
     const rowRegex =
-      /<td[^>]+>(?:<font[^>]+>)?(\d{2}.\d{2}.\d{2})[^<]+(?:<\/font>)?<\/td>[\S\s]+?<\/tr><tr style="background-color:#EEEEEE"/gi;
+      /<td[^>]+>(?:<font[^>]+>)?(\d{2}.\d{2}.\d{2})[^<]+(?:<\/font>)?<\/td>[\S\s]+?<\/tr>(?:<tr style="background-color:#EEEEEE"|<\/table>\W+<\/div>)/gi
     let rowMatches;
 
     while ((rowMatches = rowRegex.exec(timeCardHtml))) {
