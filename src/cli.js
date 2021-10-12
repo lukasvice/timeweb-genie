@@ -83,7 +83,7 @@ const parser = new Parser({
       Time: durationText(dateTime.workingMinutes),
       "Diff Hours": minutesToHours(relativeMinutes),
       Diff: durationText(relativeMinutes),
-      "Clock Out": minutesToTime(getClockOutTime(dateTime.times)),
+      "Clock Out": minutesToTime(getClockOutTime(dateTime)),
     };
   });
 
@@ -102,19 +102,21 @@ const parser = new Parser({
 })();
 
 // TODO: move to own utility lib or class?
-function getClockOutTime(workingTimes) {
+function getClockOutTime({ times, workingMinutes }) {
   let time = null;
 
-  if (workingTimes && workingTimes.length > 0) {
-    const workingTime = workingTimes[workingTimes.length - 1];
+  if (times && times.length > 0) {
+    const workingTime = times[times.length - 1];
     if (workingTime.type === TIME_TYPE_END) {
       time = workingTime.time;
     }
     if (workingTime.type === TIME_TYPE_START) {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
       time =
-        config.targetWorkingHours * 60 +
-        workingTime.time +
-        config.targetBreakMinutes;
+        nowMinutes +
+        (config.targetWorkingHours * 60 - workingMinutes) +
+        (nowMinutes < 720 || times.length < 2 ? config.targetBreakMinutes : 0);
     }
   }
 

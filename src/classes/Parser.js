@@ -152,7 +152,8 @@ function calculateWorkingTime(times) {
   // Use current time as end time, if last logged is a start time (= currently working)
   if (currentType === TIME_TYPE_START) {
     const now = new Date();
-    time += (times[times.length - 1].time - now.getHours() * 60 + now.getMinutes())
+    time +=
+      now.getHours() * 60 + now.getMinutes() - times[times.length - 1].time;
   }
 
   return time
