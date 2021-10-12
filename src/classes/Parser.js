@@ -135,7 +135,7 @@ function calculateWorkingTime(times) {
   let currentType = TIME_TYPE_END;
   let currentTime = 0;
 
-  return times.reduce((workingTime, { type, time }) => {
+  let time = times.reduce((workingTime, { type, time }) => {
     if (currentType === TIME_TYPE_END && type === TIME_TYPE_START) {
       currentTime = time;
       currentType = type;
@@ -147,4 +147,12 @@ function calculateWorkingTime(times) {
     }
     throw new Error("Start and end times not matching");
   }, 0);
+
+  // Use current time as end time, if last logged is a start time (= currently working)
+  if (currentType === TIME_TYPE_START) {
+    const now = new Date();
+    time += (times[times.length - 1].time - now.getHours() * 60 + now.getMinutes())
+  }
+
+  return time
 }
