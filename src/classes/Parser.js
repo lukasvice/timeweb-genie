@@ -1,7 +1,7 @@
 const TIME_TYPE_START = "start";
 const TIME_TYPE_END = "end";
 
-module.exports = class {
+class Parser {
   constructor(config = null) {
     this.justificationTypes = config.justificationTypes;
     this.dateTimes = [];
@@ -22,6 +22,7 @@ module.exports = class {
 
       return {
         date,
+        times,
         workingMinutes,
       };
     });
@@ -156,3 +157,7 @@ function calculateWorkingTime(times) {
 
   return time
 }
+
+module.exports = Parser;
+module.exports.TIME_TYPE_END = TIME_TYPE_END;
+module.exports.TIME_TYPE_START = TIME_TYPE_START;

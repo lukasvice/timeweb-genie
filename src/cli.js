@@ -2,11 +2,14 @@
 
 const Http = require("./classes/Http");
 const Parser = require("./classes/Parser");
+const TIME_TYPE_END = require("./classes/Parser").TIME_TYPE_END;
+const TIME_TYPE_START = require("./classes/Parser").TIME_TYPE_START;
 const {
   formatDate,
   checkDateFormat,
   minutesToHours,
   durationText,
+  minutesToTime,
 } = require("./utils/dateTime");
 
 const scriptArgs = process.argv.slice(2);
@@ -17,6 +20,7 @@ let config = {
   password: null,
   justificationTypes: ["SMART WORKING", "23TELE TELEARBEIT"],
   targetWorkingHours: 7.5,
+  targetBreakMinutes: 60,
 };
 
 try {
@@ -79,6 +83,7 @@ const parser = new Parser({
       Time: durationText(dateTime.workingMinutes),
       "Diff Hours": minutesToHours(relativeMinutes),
       Diff: durationText(relativeMinutes),
+      "Clock Out": minutesToTime(getClockOutTime(dateTime.times)),
     };
   });
 
@@ -95,3 +100,23 @@ const parser = new Parser({
 
   console.table(table);
 })();
+
+// TODO: move to own utility lib or class?
+function getClockOutTime(workingTimes) {
+  let time = null;
+
+  if (workingTimes && workingTimes.length > 0) {
+    const workingTime = workingTimes[workingTimes.length - 1];
+    if (workingTime.type === TIME_TYPE_END) {
+      time = workingTime.time;
+    }
+    if (workingTime.type === TIME_TYPE_START) {
+      time =
+        config.targetWorkingHours * 60 +
+        workingTime.time +
+        config.targetBreakMinutes;
+    }
+  }
+
+  return time;
+}

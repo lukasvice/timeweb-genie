@@ -23,4 +23,11 @@ module.exports = {
 
     return [`${hours}h`, `${minutes}m`].filter((n) => parseInt(n)).join(" ");
   },
+
+  minutesToTime(minutes) {
+    const hours = Math.trunc(minutes / 60);
+    minutes = minutes - 60 * hours;
+
+    return `${("0" + hours).slice(-2)}:${("0" + minutes).slice(-2)}`;
+  },
 };

@@ -28,6 +28,7 @@ A CLI tool to calculate working hours logged in the Time@Web application.
 
    - `justificationTypes`: Overwrite the default types to be considered for calculating the working times (array of strings)
    - `targetWorkingHours`: Overwrite the default target working hours (number)
+   - `targetBreakMinutes`: Overwrite the default lunch break time (number)
 
 ## Usage
 
