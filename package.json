@@ -3,18 +3,29 @@
   "description": "A CLI tool to calculate working hours logged in the Time@Web application",
   "version": "0.0.1-alpha.7",
   "license": "MIT",
-  "author": {
-    "name": "Lukas Weiss",
-    "url": "https://lukasweiss.com"
+  "author": "Lukas Weiss (https://lukasweiss.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukasvice/timeweb-genie.git"
   },
-  "repository": "github:lukasvice/timeweb-genie",
   "bin": {
-    "timeweb-genie": "./src/cli.js"
+    "timeweb-genie": "src/cli.js"
   },
   "dependencies": {
     "axios": "^0.22.0"
   },
   "engines": {
     "node": ">=14"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/lukasvice/timeweb-genie/issues"
+  },
+  "homepage": "https://github.com/lukasvice/timeweb-genie#readme",
+  "main": "src/cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Timeweb"
+  ]
 }
