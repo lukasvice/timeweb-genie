@@ -8,17 +8,11 @@ A CLI tool to calculate working hours logged in the Time@Web application.
 
 ## Installation/Update and Configuration
 
-1. Install (or update)
-
-   ```sh
-   npm install -g github:lukasvice/timeweb-genie
-   ```
-
-2. Create a `.timeweb-genie.json` file in your home directory:
+1. Create a `~/.timeweb-genie.json` file (in your home directory):
 
    ```json
    {
-     "timewebUrl": ".../TwNet.dll",
+     "timewebUrl": "https://.../TwNet.dll",
      "username": "...",
      "password": "..."
    }
@@ -29,6 +23,22 @@ A CLI tool to calculate working hours logged in the Time@Web application.
    - `justificationTypes`: Overwrite the default types to be considered for calculating the working times (array of strings)
    - `targetWorkingHours`: Overwrite the default target working hours (number)
    - `targetBreakMinutes`: Overwrite the default lunch break time (number)
+
+2. Run, install or update
+
+   Simply run it with
+   ```sh
+   npx timeweb-genie
+   ```
+
+   *or* install it globally and run it with
+
+   ```sh
+   npm install -g timeweb-genie
+   timeweb-genie
+   ```
+
+
 
 ## Usage
 
