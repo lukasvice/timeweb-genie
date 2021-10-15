@@ -18,10 +18,16 @@ module.exports = {
   },
 
   durationText(minutes) {
+    const negative = minutes < 0;
+    minutes = Math.abs(minutes);
+
     const hours = Math.trunc(minutes / 60);
     minutes = minutes - 60 * hours;
 
-    return [`${hours}h`, `${minutes}m`].filter((n) => parseInt(n)).join(" ");
+    return (
+      (negative ? "-" : "") +
+      [`${hours}h`, `${minutes}m`].filter((n) => parseInt(n)).join(" ")
+    );
   },
 
   minutesToTime(minutes) {
