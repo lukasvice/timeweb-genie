@@ -18,7 +18,15 @@ let config = {
   timewebUrl: null,
   username: null,
   password: null,
-  justificationTypes: ["SMART WORKING", "23TELE TELEARBEIT"],
+  justificationTypes: [
+    "SMART WORKING",
+    "23TELE TELEARBEIT",
+    "02DIGA AUSSENDIENST",
+    "04SCHU SCHULUNG PASSIV",
+    "S-FEÜB FEIERTAGSÜBERSTUNDEN",
+    "SCHULUNG AKTIV",
+    "ZUSÄTZLICHE ARBEITSZEIT",
+  ],
   targetWorkingHours: 7.5,
   targetBreakMinutes: 60,
 };
