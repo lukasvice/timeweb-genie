@@ -84,7 +84,7 @@ class Parser {
   #parseJustificationTimes(row) {
     let times = [];
 
-    const htmlRegex = /onmouseover="return overlib\(event,(.*?),/i;
+    const htmlRegex = /<th[^>]*>descrizione<\/th><th[^>]*>tipo<\/th>(.*?),/i;
     const htmlMatches = htmlRegex.exec(row);
 
     if (htmlMatches) {
