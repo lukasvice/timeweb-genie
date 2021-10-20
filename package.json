@@ -1,7 +1,7 @@
 {
   "name": "timeweb-genie",
   "description": "A CLI tool to calculate working hours logged in the Time@Web application",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "license": "MIT",
   "author": "Lukas Weiss (https://lukasweiss.com)",
   "repository": {

@@ -4,7 +4,7 @@ A CLI tool to calculate working hours logged in the Time@Web application.
 
 | :warning: WARNING                              |
 | ---------------------------------------------- |
-| This is an alpha release and errors may occur. |
+| This is a beta release and errors may occur. |
 
 ## Installation/Update and Configuration
 
