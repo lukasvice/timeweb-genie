@@ -12,18 +12,23 @@ class Parser {
   }
 
   getWorkingTimes() {
-    return this.dateTimes.map(({ date, times }) => {
+    return this.dateTimes.map(({ date, workingTimes, freeTimes }) => {
       let workingMinutes = null;
+      let freeMinutes = null;
+
       try {
-        workingMinutes = calculateWorkingTime(times);
+        workingMinutes = calculateWorkingTime(workingTimes);
+        freeMinutes = calculateWorkingTime(freeTimes);
       } catch (e) {
         console.error(e.message);
       }
 
       return {
         date,
-        times,
+        workingTimes,
+        freeTimes,
         workingMinutes,
+        freeMinutes,
       };
     });
   }
@@ -32,19 +37,20 @@ class Parser {
     let dateTimes = [];
 
     const rowRegex =
-      /<td[^>]+>(?:<font[^>]+>)?(\d{2}.\d{2}.\d{2})[^<]+(?:<\/font>)?<\/td>[\S\s]+?<\/tr>(?:<tr style="background-color:#EEEEEE"|<\/table>\W+<\/div>)/gi
+      /<td[^>]+>(?:<font[^>]+>)?(\d{2}.\d{2}.\d{2})[^<]+(?:<\/font>)?<\/td>[\S\s]+?<\/tr>(?:<tr style="background-color:#EEEEEE"|<\/table>\W+<\/div>)/gi;
     let rowMatches;
 
     while ((rowMatches = rowRegex.exec(timeCardHtml))) {
       const date = rowMatches[1];
       const row = rowMatches[0];
 
-      const times = this.#parseRow(row);
+      const { workingTimes, freeTimes } = this.#parseRow(row);
 
-      if (times.length) {
+      if (workingTimes.length || freeTimes.length) {
         dateTimes.push({
           date,
-          times,
+          workingTimes,
+          freeTimes,
         });
       }
     }
@@ -54,9 +60,12 @@ class Parser {
 
   #parseRow(row) {
     const clockedTimes = this.#parseClockedTimes(row);
-    const justificationTimes = this.#parseJustificationTimes(row);
+    const { workingTimes, freeTimes } = this.#parseJustificationTimes(row);
 
-    return mergeTimes(clockedTimes, justificationTimes);
+    return {
+      workingTimes: mergeTimes(clockedTimes, workingTimes),
+      freeTimes,
+    };
   }
 
   #parseClockedTimes(row) {
@@ -82,7 +91,8 @@ class Parser {
   }
 
   #parseJustificationTimes(row) {
-    let times = [];
+    let workingTimes = [];
+    let freeTimes = [];
 
     const htmlRegex = /<th[^>]*>descrizione<\/th><th[^>]*>tipo<\/th>(.*?),/i;
     const htmlMatches = htmlRegex.exec(row);
@@ -95,31 +105,33 @@ class Parser {
       while ((rowMatches = rowRegex.exec(popupHtml))) {
         const row = rowMatches[1];
 
-        const foundType = this.justificationTypes.find((type) =>
-          row.includes(type)
-        );
+        const timesRegex = /<TD>(\d{2}:\d{2})<\/TD><TD>(\d{2}:\d{2})<\/TD>/i;
+        const timesMatches = timesRegex.exec(row);
 
-        if (foundType) {
-          const timesRegex = /<TD>(\d{2}:\d{2})<\/TD>/gi;
-
-          const timesMatchesStart = timesRegex.exec(row);
-          const timesMatchesEnd = timesRegex.exec(row);
-
-          times.push({
-            type: TIME_TYPE_START,
-            time: timeHHMMToMinutes(timesMatchesStart[1]),
-          });
-          times.push({
-            type: TIME_TYPE_END,
-            time: timeHHMMToMinutes(timesMatchesEnd[1]),
-          });
+        if (timesMatches) {
+          const foundWorkingType = this.justificationTypes.find((type) =>
+            row.includes(type)
+          );
+          (foundWorkingType ? workingTimes : freeTimes).push(
+            {
+              type: TIME_TYPE_START,
+              time: timeHHMMToMinutes(timesMatches[1]),
+            },
+            {
+              type: TIME_TYPE_END,
+              time: timeHHMMToMinutes(timesMatches[2]),
+            }
+          );
         }
       }
     }
 
-    return times;
+    return {
+      workingTimes,
+      freeTimes,
+    };
   }
-};
+}
 
 function timeHHMMToMinutes(time) {
   const parts = time.split(":");
@@ -156,7 +168,7 @@ function calculateWorkingTime(times) {
       now.getHours() * 60 + now.getMinutes() - times[times.length - 1].time;
   }
 
-  return time
+  return time;
 }
 
 module.exports = Parser;

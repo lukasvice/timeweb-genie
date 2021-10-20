@@ -75,20 +75,25 @@ const parser = new Parser({
 
   const totals = {
     workingMinutes: 0,
+    freeMinutes: 0,
     relativeMinutes: 0,
   };
 
   const table = parser.getWorkingTimes().map((dateTime) => {
     const relativeMinutes =
-      dateTime.workingMinutes - config.targetWorkingHours * 60;
+      dateTime.workingMinutes +
+      dateTime.freeMinutes -
+      config.targetWorkingHours * 60;
 
     totals.workingMinutes += dateTime.workingMinutes;
+    totals.freeMinutes += dateTime.freeMinutes;
     totals.relativeMinutes += relativeMinutes;
 
     return {
       Date: dateTime.date,
-      Hours: minutesToHours(dateTime.workingMinutes),
-      Time: durationText(dateTime.workingMinutes),
+      "Working Hours": minutesToHours(dateTime.workingMinutes),
+      "Working Time": durationText(dateTime.workingMinutes),
+      "Free Time": durationText(dateTime.freeMinutes),
       "Diff Hours": minutesToHours(relativeMinutes),
       Diff: durationText(relativeMinutes),
       "Clock Out": minutesToTime(getClockOutTime(dateTime)),
@@ -99,8 +104,8 @@ const parser = new Parser({
     {},
     {
       Date: "TOTAL",
-      Hours: minutesToHours(totals.workingMinutes),
-      Time: durationText(totals.workingMinutes),
+      "Working Hours": minutesToHours(totals.workingMinutes),
+      "Working Time": durationText(totals.workingMinutes),
       "Diff Hours": minutesToHours(totals.relativeMinutes),
       Diff: durationText(totals.relativeMinutes),
     }
@@ -110,11 +115,11 @@ const parser = new Parser({
 })();
 
 // TODO: move to own utility lib or class?
-function getClockOutTime({ times, workingMinutes }) {
+function getClockOutTime({ workingTimes, workingMinutes, freeMinutes }) {
   let time = null;
 
-  if (times && times.length > 0) {
-    const workingTime = times[times.length - 1];
+  if (workingTimes && workingTimes.length > 0) {
+    const workingTime = workingTimes[workingTimes.length - 1];
     if (workingTime.type === TIME_TYPE_END) {
       time = workingTime.time;
     }
@@ -124,7 +129,10 @@ function getClockOutTime({ times, workingMinutes }) {
       time =
         nowMinutes +
         (config.targetWorkingHours * 60 - workingMinutes) +
-        (nowMinutes < 720 || times.length < 2 ? config.targetBreakMinutes : 0);
+        (nowMinutes < 720 || workingTimes.length < 2
+          ? config.targetBreakMinutes
+          : 0) +
+        freeMinutes;
     }
   }
 
