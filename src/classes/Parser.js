@@ -4,6 +4,7 @@ const TIME_TYPE_END = "end";
 class Parser {
   constructor(config = null) {
     this.justificationTypes = config.justificationTypes;
+    this.justificationTypesToIgnore = config.justificationTypesToIgnore;
     this.dateTimes = [];
   }
 
@@ -112,6 +113,15 @@ class Parser {
           const foundWorkingType = this.justificationTypes.find((type) =>
             row.includes(type)
           );
+
+          const foundTypeToIgnore = this.justificationTypesToIgnore.find((type) =>
+              row.includes(type)
+          );
+
+          if(foundTypeToIgnore){
+            continue;
+          }
+
           (foundWorkingType ? workingTimes : freeTimes).push(
             {
               type: TIME_TYPE_START,

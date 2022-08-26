@@ -27,6 +27,9 @@ let config = {
     "SCHULUNG AKTIV",
     "ZUSÄTZLICHE ARBEITSZEIT",
   ],
+  justificationTypesToIgnore: [
+    "06ZAOA ZEITAUSGLEICH o. ABZUG",
+  ],
   targetWorkingHours: 7.5,
   targetBreakMinutes: 60,
 };
@@ -48,6 +51,7 @@ const http = new Http({
 
 const parser = new Parser({
   justificationTypes: config.justificationTypes,
+  justificationTypesToIgnore: config.justificationTypesToIgnore
 });
 
 (async () => {
