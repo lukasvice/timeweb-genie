@@ -1,15 +1,15 @@
 {
-  "name": "timeweb-genie",
+  "name": "timeweb-genie-neo",
   "description": "A CLI tool to calculate working hours logged in the Time@Web application",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "license": "MIT",
-  "author": "Lukas Weiss (https://lukasweiss.com)",
+  "author": "Lukas Weiss (https://lukasweiss.com), Samuel Runggaldier (https://samuelru.com)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lukasvice/timeweb-genie.git"
+    "url": "git+https://github.com/samuelru/timeweb-genie-neo.git"
   },
   "bin": {
-    "timeweb-genie": "src/cli.js"
+    "timeweb-genie-neo": "src/cli.js"
   },
   "dependencies": {
     "axios": "^0.22.0"
@@ -18,9 +18,9 @@
     "node": ">=14"
   },
   "bugs": {
-    "url": "https://github.com/lukasvice/timeweb-genie/issues"
+    "url": "https://github.com/samuelru/timeweb-genie-neo/issues"
   },
-  "homepage": "https://github.com/lukasvice/timeweb-genie#readme",
+  "homepage": "https://github.com/samuelru/timeweb-genie-neo#readme",
   "main": "src/cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
